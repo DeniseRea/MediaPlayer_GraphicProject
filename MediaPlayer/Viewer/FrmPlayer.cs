@@ -22,6 +22,7 @@ namespace MediaPlayer
         private readonly PlayerPresenter _presenter;
         public event Action StopClicked;
         public event Action forwardClicked;
+        public event Action rewindClicked;
 
         public void UpdateProgressBar(int progress)
         {
@@ -76,7 +77,12 @@ namespace MediaPlayer
         {
             StopClicked?.Invoke();
         }
+
+        private void btn_back_Click(object sender, EventArgs e)
+        {
+            rewindClicked?.Invoke();
         }
+    }
     }
 
 

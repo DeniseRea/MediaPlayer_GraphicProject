@@ -76,13 +76,13 @@
             // reproduciendoToolStripMenuItem
             // 
             this.reproduciendoToolStripMenuItem.Name = "reproduciendoToolStripMenuItem";
-            this.reproduciendoToolStripMenuItem.Size = new System.Drawing.Size(125, 24);
+            this.reproduciendoToolStripMenuItem.Size = new System.Drawing.Size(125, 26);
             this.reproduciendoToolStripMenuItem.Text = "Reproduciendo";
             // 
             // libreriaToolStripMenuItem
             // 
             this.libreriaToolStripMenuItem.Name = "libreriaToolStripMenuItem";
-            this.libreriaToolStripMenuItem.Size = new System.Drawing.Size(73, 24);
+            this.libreriaToolStripMenuItem.Size = new System.Drawing.Size(73, 26);
             this.libreriaToolStripMenuItem.Text = "Libreria";
             // 
             // menuStrip1
@@ -93,7 +93,7 @@
             this.libreriaToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1207, 28);
+            this.menuStrip1.Size = new System.Drawing.Size(1207, 30);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -108,6 +108,7 @@
             this.btn_back.Size = new System.Drawing.Size(135, 69);
             this.btn_back.TabIndex = 32;
             this.btn_back.UseVisualStyleBackColor = false;
+            this.btn_back.Click += new System.EventHandler(this.btn_back_Click);
             // 
             // btn_forward
             // 

@@ -32,6 +32,7 @@ namespace MediaPlayer.Presenter
             _view.PlayPauseClicked += OnPlayPauseClicked;
             _view.StopClicked += StopPlayback; 
             _view.forwardClicked += ForwardPlayback; 
+            _view.rewindClicked += RewindPlayback;
 
             _progressTimer = new Timer { Interval = 100 };
             _progressTimer.Tick += (s, e) => UpdateProgress();
@@ -154,6 +155,28 @@ namespace MediaPlayer.Presenter
             catch (Exception ex)
             {
                 Console.WriteLine($"Error en ForwardPlayback: {ex.Message}");
+            }
+        }
+
+        private void RewindPlayback()
+        {
+            try
+            {
+                double currentPosition = music.GetCurrentPosition();
+
+                // Verificar que no se pase del inicio
+                if (currentPosition > 10)
+                {
+                    music.SetPosition(currentPosition - 10); // Retroceder 10 segundos
+                }
+                else
+                {
+                    music.SetPosition(0); // Ir al inicio
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error en RewindPlayback: {ex.Message}");
             }
         }
 

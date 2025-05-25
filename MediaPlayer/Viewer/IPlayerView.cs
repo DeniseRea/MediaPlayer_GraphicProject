@@ -14,6 +14,7 @@ namespace MediaPlayer.Viewer
         event Action PlayPauseClicked;
         event Action StopClicked;
         event Action forwardClicked;
+        event Action rewindClicked;
         /* event Action StopClicked;
          event Action NextClicked;
          event Action PreviousClicked;
