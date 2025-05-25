@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Model\ControlStyler.cs" />
+    <Compile Include="Model\MusicPlayer.cs" />
     <Compile Include="Presenter\PlayerPresenter.cs" />
     <Compile Include="Viewer\FrmMedia.cs">
       <SubType>Form</SubType>

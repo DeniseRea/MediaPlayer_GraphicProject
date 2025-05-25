@@ -20,6 +20,8 @@ namespace MediaPlayer
         // Implementación de la interfaz IPlayerView
         public event Action PlayPauseClicked;
         private readonly PlayerPresenter _presenter;
+        public event Action StopClicked;
+        public event Action forwardClicked;
 
         public void UpdateProgressBar(int progress)
         {
@@ -32,19 +34,23 @@ namespace MediaPlayer
             {
                 case PlayerState.Stopped:
                     btn_play.BackgroundImage = Properties.Resources.play1;
-                    //btn_play.Text = "▶️ Reproducir";
                     break;
                 case PlayerState.Playing:
                     btn_play.BackgroundImage = Properties.Resources.pause;
-                    //btn_play.Text = "⏸️ Pausar";
                     break;
                 case PlayerState.Paused:
                     btn_play.BackgroundImage = Properties.Resources.play1;
-                    //btn_play.Text = "▶️ Reanudar";
                     break;
             }
         }
-            ControlStyler control_ = new ControlStyler();
+
+        public void UpdateTimeDisplay(string currentTime, string totalTime)
+        {
+            // Actualiza el tiempo de reproducción y duración
+            // lbl_currentTime.Text = _presenter.CurrentTime;
+            // lbl_totalTime.Text = _presenter.TotalTime;
+        }
+        ControlStyler control_ = new ControlStyler();
         public FrmPlayer()
         {
             InitializeComponent();
@@ -61,6 +67,16 @@ namespace MediaPlayer
             PlayPauseClicked?.Invoke();
         }
 
+        private void btn_forward_Click(object sender, EventArgs e)
+        {
+            forwardClicked?.Invoke();
+        }
+
+        private void btn_stop_Click(object sender, EventArgs e)
+        {
+            StopClicked?.Invoke();
+        }
+        }
     }
 
-}
+

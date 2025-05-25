@@ -12,15 +12,16 @@ namespace MediaPlayer.Viewer
     {
         //listsners
         event Action PlayPauseClicked;
-        
-        //event Action ResumeClicked;
+        event Action StopClicked;
+        event Action forwardClicked;
         /* event Action StopClicked;
          event Action NextClicked;
          event Action PreviousClicked;
-         event Action returnClicked;
-         event Action advanceClicked;*/
-        
-        void UpdateProgressBar(int progress);
+         event Action<int> VolumeChanged;*/
+
         void UpdateButtonState(PlayerState state);
+        void UpdateProgressBar(int percentage);
+       // void UpdateTrackName(string trackName);
+        void UpdateTimeDisplay(string currentTime, string totalTime);
     }
 }

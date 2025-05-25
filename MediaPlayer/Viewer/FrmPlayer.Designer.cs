@@ -124,6 +124,7 @@
             this.btn_forward.Size = new System.Drawing.Size(135, 69);
             this.btn_forward.TabIndex = 31;
             this.btn_forward.UseVisualStyleBackColor = false;
+            this.btn_forward.Click += new System.EventHandler(this.btn_forward_Click);
             // 
             // txt_main
             // 
@@ -152,6 +153,7 @@
             this.btn_stop.Size = new System.Drawing.Size(94, 69);
             this.btn_stop.TabIndex = 29;
             this.btn_stop.UseVisualStyleBackColor = false;
+            this.btn_stop.Click += new System.EventHandler(this.btn_stop_Click);
             // 
             // btn_return
             // 
