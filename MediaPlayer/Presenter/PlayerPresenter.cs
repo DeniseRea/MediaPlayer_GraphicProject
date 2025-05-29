@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using MediaPlayer.Viewer;
 using System.Windows.Forms;
 using MediaPlayer.Model;
+using System.Drawing;
 
 namespace MediaPlayer.Presenter
 
@@ -25,6 +26,7 @@ namespace MediaPlayer.Presenter
         private PlayerState _currentState = PlayerState.Stopped;
         private int _currentProgress = 0;
         MusicPlayer music = new MusicPlayer();
+        private RadialCircle visualizer;
 
         public PlayerPresenter(IPlayerView view)
         {
@@ -42,6 +44,7 @@ namespace MediaPlayer.Presenter
             
             // Configurar eventos del MusicPlayer UNA VEZ
             ConfigureMusicPlayerEvents();
+            InitializeVisualizer();
         }
 
         private void LoadDefaultMusic()
@@ -204,6 +207,24 @@ namespace MediaPlayer.Presenter
             {
                 Console.WriteLine($"Error en UpdateProgress: {ex.Message}");
             }
+        }
+
+        private void InitializeVisualizer()
+        {
+            //Point center = _view.GetVisualizerCenter(pc_graph);
+            //visualizer = new RadialCircle(center, 100); // Radio inicial de 100
+        }
+
+        public void UpdateVisualizer(float audioLevel)
+        {
+            // Convertir el nivel de audio a un radio entre 50 y 200
+            int newRadius = 50 + (int)(audioLevel * 150);
+            _view.UpdateVisualizer(newRadius);
+        }
+
+        public RadialCircle GetVisualizer()
+        {
+            return visualizer;
         }
     }
 

@@ -53,8 +53,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\AnimationManager.cs" />
     <Compile Include="Model\ControlStyler.cs" />
+    <Compile Include="Model\DrawableShape.cs" />
+    <Compile Include="Model\Line.cs" />
     <Compile Include="Model\MusicPlayer.cs" />
+    <Compile Include="Model\RadialCircle.cs" />
+    <Compile Include="Model\StraightLine.cs" />
+    <Compile Include="Model\Transform2D.cs" />
     <Compile Include="Presenter\PlayerPresenter.cs" />
     <Compile Include="Viewer\FrmMedia.cs">
       <SubType>Form</SubType>
@@ -143,6 +149,9 @@
     <Content Include="play1.ico" />
     <None Include="Resources\pause.bmp" />
     <Content Include="stop.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Viewer\Views\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

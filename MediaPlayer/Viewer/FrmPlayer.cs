@@ -23,35 +23,11 @@ namespace MediaPlayer
         public event Action StopClicked;
         public event Action forwardClicked;
         public event Action rewindClicked;
-
-        public void UpdateProgressBar(int progress)
-        {
-            progressBar_playing.Value = progress;
-        }
-
-        public void UpdateButtonState(PlayerState state)
-        {
-            switch (state)
-            {
-                case PlayerState.Stopped:
-                    btn_play.BackgroundImage = Properties.Resources.play1;
-                    break;
-                case PlayerState.Playing:
-                    btn_play.BackgroundImage = Properties.Resources.pause;
-                    break;
-                case PlayerState.Paused:
-                    btn_play.BackgroundImage = Properties.Resources.play1;
-                    break;
-            }
-        }
-
-        public void UpdateTimeDisplay(string currentTime, string totalTime)
-        {
-            // Actualiza el tiempo de reproducción y duración
-            // lbl_currentTime.Text = _presenter.CurrentTime;
-            // lbl_totalTime.Text = _presenter.TotalTime;
-        }
         ControlStyler control_ = new ControlStyler();
+        public DrawableShape visualizer;
+        private AnimationManager animationManager;
+
+
         public FrmPlayer()
         {
             InitializeComponent();
@@ -60,12 +36,125 @@ namespace MediaPlayer
             control_.ApplyRoundedCorners(txt_main, 50);
             progressBar_playing.Minimum = 0;
             progressBar_playing.Maximum = 1000;
+            
+            Point center = GetVisualizerCenter(pc_graph);
+            visualizer = new RadialCircle(center, 150);
+            
+            // Configurar AnimationManager
+            SetupAnimationManager();
+            
+            pc_graph.Paint += Pc_graph_Paint;
         }
 
+        private AnimationManager AnimationManager
+        {
+            get
+            {
+                if (animationManager == null)
+                {
+                    SetupAnimationManager();
+                }
+                return animationManager;
+            }
+        }
 
+        private void SetupAnimationManager()
+        {
+            if (animationManager != null) return;
+
+            if (visualizer == null)
+            {
+                Point center = GetVisualizerCenter(pc_graph);
+                visualizer = new RadialCircle(center, 150);
+            }
+
+            animationManager = new AnimationManager(visualizer, 20);
+            
+            // Configurar parámetros
+            animationManager.SetRotationSpeed(2f);
+            animationManager.SetScaleSpeed(0.02f);
+            animationManager.SetScaleRange(0.5f, 1.5f);
+            
+            // Suscribirse al evento
+            animationManager.OnAnimationUpdated += () => pc_graph?.Invalidate();
+            
+            // FORZAR INICIO para probar que funciona
+            animationManager.StartAnimation(AnimationType.RotationAndScaling);
+            System.Diagnostics.Debug.WriteLine("Animation forced to start in constructor");
+        }
+
+        public void UpdateButtonState(PlayerState state)
+        {
+            System.Diagnostics.Debug.WriteLine($"UpdateButtonState called with state: {state}");
+            
+            switch (state)
+            {
+                case PlayerState.Stopped:
+                    btn_play.BackgroundImage = Properties.Resources.play1;
+                    System.Diagnostics.Debug.WriteLine("Calling StopAnimation");
+                    AnimationManager.StopAnimation();
+                    break;
+                case PlayerState.Playing:
+                    btn_play.BackgroundImage = Properties.Resources.pause;
+                    System.Diagnostics.Debug.WriteLine("Calling StartAnimation with RotationAndScaling");
+                    AnimationManager.StartAnimation(AnimationType.RotationAndScaling);
+                    break;
+                case PlayerState.Paused:
+                    btn_play.BackgroundImage = Properties.Resources.play1;
+                    System.Diagnostics.Debug.WriteLine("Calling PauseAnimation");
+                    AnimationManager.PauseAnimation();
+                    break;
+            }
+        }
+
+        private void Pc_graph_Paint(object sender, PaintEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine("Pc_graph_Paint called");
+            if (visualizer != null)
+            {
+                System.Diagnostics.Debug.WriteLine("Drawing visualizer");
+                visualizer.Draw(e.Graphics);
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("Visualizer is null, not drawing");
+            }
+        }
+
+        public void UpdateVisualizer(int radius)
+        {
+            if (visualizer is RadialCircle radialCircle)
+            {
+                Point center = GetVisualizerCenter(pc_graph);
+                radialCircle.SetCenter(center);
+                radialCircle.SetRadius(radius);
+            }
+            else
+            {
+                Point center = GetVisualizerCenter(pc_graph);
+                visualizer = new RadialCircle(center, radius);
+                animationManager.SetTarget(visualizer); // Actualizar target
+            }
+            pc_graph.Invalidate();
+        }
+
+        // Métodos para cambiar tipos de animación (puedes conectarlos a botones)
+        public void SetAnimationType(AnimationType type)
+        {
+            animationManager.StartAnimation(type);
+        }
+
+        public void UpdateProgressBar(int progress)
+        {
+            progressBar_playing.Value = progress;
+        }
+
+        // Resto de métodos existentes...
         private void btn_play_Click(object sender, EventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine("Play button clicked!");
             PlayPauseClicked?.Invoke();
+            
         }
 
         private void btn_forward_Click(object sender, EventArgs e)
@@ -82,7 +171,24 @@ namespace MediaPlayer
         {
             rewindClicked?.Invoke();
         }
-    }
-    }
 
+        public Point GetVisualizerCenter(PictureBox pic)
+        {
+            if (pic == null)
+            {
+                throw new ArgumentNullException(nameof(pic), "El PictureBox no puede ser nulo");
+            }
+
+            int centerX = pic.Width / 2;
+            int centerY = pic.Height / 2;
+            return new Point(centerX, centerY);
+        }
+
+        protected override void OnFormClosed(FormClosedEventArgs e)
+        {
+            animationManager?.Dispose();
+            base.OnFormClosed(e);
+        }
+    }
+}
 
