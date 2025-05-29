@@ -148,6 +148,9 @@
     <Content Include="pause.ico" />
     <Content Include="play1.ico" />
     <None Include="Resources\pause.bmp" />
+    <Content Include="Resources\Neffex - Cold.mp3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="stop.ico" />
   </ItemGroup>
   <ItemGroup>

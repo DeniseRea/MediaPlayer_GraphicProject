@@ -36,13 +36,13 @@ namespace MediaPlayer
             control_.ApplyRoundedCorners(txt_main, 50);
             progressBar_playing.Minimum = 0;
             progressBar_playing.Maximum = 1000;
-            
+
             Point center = GetVisualizerCenter(pc_graph);
             visualizer = new RadialCircle(center, 150);
-            
+
             // Configurar AnimationManager
             SetupAnimationManager();
-            
+
             pc_graph.Paint += Pc_graph_Paint;
         }
 
@@ -69,15 +69,15 @@ namespace MediaPlayer
             }
 
             animationManager = new AnimationManager(visualizer, 20);
-            
+
             // Configurar parámetros
             animationManager.SetRotationSpeed(2f);
             animationManager.SetScaleSpeed(0.02f);
             animationManager.SetScaleRange(0.5f, 1.5f);
-            
+
             // Suscribirse al evento
             animationManager.OnAnimationUpdated += () => pc_graph?.Invalidate();
-            
+
             // FORZAR INICIO para probar que funciona
             animationManager.StartAnimation(AnimationType.RotationAndScaling);
             System.Diagnostics.Debug.WriteLine("Animation forced to start in constructor");
@@ -86,23 +86,25 @@ namespace MediaPlayer
         public void UpdateButtonState(PlayerState state)
         {
             System.Diagnostics.Debug.WriteLine($"UpdateButtonState called with state: {state}");
-            
+
             switch (state)
             {
                 case PlayerState.Stopped:
                     btn_play.BackgroundImage = Properties.Resources.play1;
-                    System.Diagnostics.Debug.WriteLine("Calling StopAnimation");
                     AnimationManager.StopAnimation();
+                    System.Diagnostics.Debug.WriteLine("Llamada a StopAnimation");
                     break;
+
                 case PlayerState.Playing:
                     btn_play.BackgroundImage = Properties.Resources.pause;
-                    System.Diagnostics.Debug.WriteLine("Calling StartAnimation with RotationAndScaling");
                     AnimationManager.StartAnimation(AnimationType.RotationAndScaling);
+                    System.Diagnostics.Debug.WriteLine("Llamada a StartAnimation con RotationAndScaling");
                     break;
+
                 case PlayerState.Paused:
                     btn_play.BackgroundImage = Properties.Resources.play1;
-                    System.Diagnostics.Debug.WriteLine("Calling PauseAnimation");
                     AnimationManager.PauseAnimation();
+                    System.Diagnostics.Debug.WriteLine("Llamada a PauseAnimation");
                     break;
             }
         }
@@ -154,7 +156,7 @@ namespace MediaPlayer
         {
             System.Diagnostics.Debug.WriteLine("Play button clicked!");
             PlayPauseClicked?.Invoke();
-            
+
         }
 
         private void btn_forward_Click(object sender, EventArgs e)
@@ -188,6 +190,11 @@ namespace MediaPlayer
         {
             animationManager?.Dispose();
             base.OnFormClosed(e);
+        }
+
+        private void FrmPlayer_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -27,21 +27,24 @@ namespace MediaPlayer.Presenter
         private int _currentProgress = 0;
         MusicPlayer music = new MusicPlayer();
         private RadialCircle visualizer;
+        // Añade esta variable para controlar actualizaciones de nivel de audio
+        private Timer _audioLevelTimer;
+        private Random _random = new Random();
 
         public PlayerPresenter(IPlayerView view)
         {
             _view = view;
             _view.PlayPauseClicked += OnPlayPauseClicked;
-            _view.StopClicked += StopPlayback; 
-            _view.forwardClicked += ForwardPlayback; 
+            _view.StopClicked += StopPlayback;
+            _view.forwardClicked += ForwardPlayback;
             _view.rewindClicked += RewindPlayback;
 
             _progressTimer = new Timer { Interval = 100 };
             _progressTimer.Tick += (s, e) => UpdateProgress();
-            
+
             // Cargar música por defecto al inicializar
             LoadDefaultMusic();
-            
+
             // Configurar eventos del MusicPlayer UNA VEZ
             ConfigureMusicPlayerEvents();
             InitializeVisualizer();
@@ -49,11 +52,11 @@ namespace MediaPlayer.Presenter
 
         private void LoadDefaultMusic()
         {
-            string defaultPath = "C:\\Users\\denise\\Documents\\GitHub\\MediaPlayer_GraphicProject\\MediaPlayer\\music\\AaronSmith_Chrono.mp3";
-            
+            string defaultPath = System.IO.Path.Combine(
+                AppDomain.CurrentDomain.BaseDirectory, "Resources", "Neffex - Cold.mp3");
+
             if (music.LoadTrack(defaultPath))
             {
-                // Asegurar que esté detenido después de cargar
                 music.Stop();
                 _currentState = PlayerState.Stopped;
                 _view.UpdateButtonState(_currentState);
@@ -66,22 +69,22 @@ namespace MediaPlayer.Presenter
 
         private void ConfigureMusicPlayerEvents()
         {
-            music.PlaybackStarted += () => { 
+            music.PlaybackStarted += () => {
                 _currentState = PlayerState.Playing;
                 _view.UpdateButtonState(_currentState);
             };
-            
-            music.PlaybackPaused += () => { 
+
+            music.PlaybackPaused += () => {
                 _currentState = PlayerState.Paused;
                 _view.UpdateButtonState(_currentState);
             };
-            
-            music.PlaybackStopped += () => { 
+
+            music.PlaybackStopped += () => {
                 _currentState = PlayerState.Stopped;
                 _view.UpdateButtonState(_currentState);
             };
-            
-            music.PlaybackEnded += () => { 
+
+            music.PlaybackEnded += () => {
                 _currentState = PlayerState.Stopped;
                 _view.UpdateButtonState(_currentState);
             };
@@ -108,13 +111,23 @@ namespace MediaPlayer.Presenter
         private void StartPlayback()
         {
             _progressTimer.Start();
-            // se carga la animación
+
+            // Iniciar animación en el visualizador
+            UpdateVisualizer(0.5f); // Nivel base medio
+
+            // Iniciar timer para simular cambios en el nivel de audio
+            if (_audioLevelTimer == null)
+            {
+                _audioLevelTimer = new Timer { Interval = 50 };
+                _audioLevelTimer.Tick += (s, e) => UpdateAudioLevels();
+            }
+            _audioLevelTimer.Start();
         }
 
         private void PausePlayback()
         {
             _progressTimer.Stop();
-            // aqui e pausa igual la animacion 
+            _audioLevelTimer?.Stop(); // Detener actualizaciones de audio
         }
 
         private void ResumePlayback()
@@ -126,24 +139,27 @@ namespace MediaPlayer.Presenter
         private void StopPlayback()
         {
             _progressTimer.Stop();
+            _audioLevelTimer?.Stop(); // Detener actualizaciones de audio
             _currentProgress = 0;
             _currentState = PlayerState.Stopped;
             _view.UpdateButtonState(_currentState);
-            music.Stop(); 
-            // Aquí se detiene la animación
+            music.Stop();
+
+            // Actualizar visualizador a nivel mínimo
+            UpdateVisualizer(0.1f);
         }
-        
+
         private void ForwardPlayback()
         {
             try
             {
                 double currentPosition = music.GetCurrentPosition();
                 double duration = music.GetDuration();
-                
+
                 if (duration <= 0) return; // No hay canción cargada
-                
+
                 double newPosition = currentPosition + 10; // Avanzar 10 segundos
-                
+
                 // Verificar que no se pase del final
                 if (newPosition < duration)
                 {
@@ -189,13 +205,13 @@ namespace MediaPlayer.Presenter
             {
                 double currentPosition = music.GetCurrentPosition();
                 double duration = music.GetDuration();
-                
+
                 if (duration > 0)
                 {
                     // Calcular progreso real basado en la duración de la canción
                     int progressPercentage = (int)((currentPosition / duration) * 1000);
                     _view.UpdateProgressBar(progressPercentage);
-                    
+
                     // Si llegó al final, detener
                     if (currentPosition >= duration - 0.1)
                     {
@@ -225,6 +241,25 @@ namespace MediaPlayer.Presenter
         public RadialCircle GetVisualizer()
         {
             return visualizer;
+        }
+
+        private void UpdateAudioLevels()
+        {
+            if (_currentState == PlayerState.Playing)
+            {
+                // Simular nivel de audio basado en la posición de reproducción
+                // para crear un efecto visual más interesante
+                double position = music.GetCurrentPosition();
+                float baseLevel = 0.3f;
+                float randomComponent = (float)_random.NextDouble() * 0.3f;
+                float sinComponent = (float)Math.Sin(position * 0.5) * 0.4f;
+
+                // Combinar componentes para un nivel entre 0.3 y 1.0
+                float audioLevel = Math.Min(1.0f, baseLevel + randomComponent + Math.Abs(sinComponent));
+
+                // Actualizar visualizador
+                UpdateVisualizer(audioLevel);
+            }
         }
     }
 
